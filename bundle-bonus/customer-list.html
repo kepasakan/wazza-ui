@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --bg-body: #F3F4F6;
+            --surface: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-card {
+            background: var(--surface);
+            width: 100%;
+            max-width: 1400px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* Header */
+        #header-section {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            padding: 30px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-group h2 { margin: 0; font-size: 28px; font-weight: 800; }
+        .title-group p { margin: 5px 0 0 0; opacity: 0.9; }
+
+        /* Filter Bar Section */
+        .filter-bar {
+            padding: 20px 30px;
+            background: #F9FAFB;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Search Box Style */
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            min-width: 250px;
+        }
+        
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .search-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        /* Dropdown Style */
+        .filter-select {
+            padding: 12px 35px 12px 15px; /* Extra padding right for arrow */
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background-color: white;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            outline: none;
+            min-width: 150px;
+            appearance: none; /* Remove default arrow */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .filter-select:focus { border-color: var(--primary); }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-add:hover { background: #4338CA; }
+
+        /* Table */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        
+        thead th {
+            padding: 15px 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: white;
+            border-bottom: 2px solid var(--border);
+            text-align: left;
+        }
+
+        tbody td { padding: 16px 24px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        tbody tr:hover { background-color: #F8FAFC; }
+
+        /* Components */
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 600; font-size: 13px; color: white; }
+        .bg-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-orange { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .bg-green { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+
+        .contact-info div { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .contact-info i { width: 14px; text-align: center; }
+
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef9c3; color: #854d0e; }
+        .status-inactive { background: #f3f4f6; color: #4b5563; }
+
+        .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: white; color: var(--text-muted); cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-wa { border-color: #dcfce7; color: #15803d; background: #dcfce7; }
+        .btn-wa:hover { background: #25D366; color: white; border-color: #25D366; }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-card">
+        <div id="header-section">
+            <div class="title-group">
+                <h2>Data Pelanggan</h2>
+                <p>Carian & Pengurusan Database</p>
+            </div>
+            <button class="btn-add"><i class="fas fa-plus"></i> Daftar Baru</button>
+        </div>
+
+        <div class="filter-bar">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari Nama, Email atau No. Tel..." onkeyup="filterTable()">
+            </div>
+
+            <select id="filterCategory" class="filter-select" onchange="filterTable()">
+                <option value="all">Semua Kategori</option>
+                <option value="Retail">Retail</option>
+                <option value="Wholesale">Wholesale</option>
+                <option value="VIP">VIP</option>
+            </select>
+
+            <select id="filterStatus" class="filter-select" onchange="filterTable()">
+                <option value="all">Semua Status</option>
+                <option value="Active">Active</option>
+                <option value="Pending">Pending</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table id="customerTable">
+                <thead>
+                    <tr>
+                        <th width="25%">Pelanggan</th>
+                        <th width="20%">Hubungi</th>
+                        <th width="20%">Alamat</th>
+                        <th>Kategori</th>
+                        <th>PIC</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-category="Retail" data-status="Active">
+                        <td>
+                            <div class="user-profile">
+                                <div class="avatar bg-blue">BP</div>
+                                <div>
+                                    <div style="font-weight: 600;">Boe Peep</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">#001</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="contact-info">
+                            <div style="font-size: 13px;"><i class="fas fa-envelope text-muted"></i> boe@gmail.com</div>
+                            <div style="font-size: 12px; color: #6b7280;"><i class="fas fa-phone"></i> 012-345 6789</div>
+                        </td>
+                        <td style="font-size: 13px; color: #4b5563;">123 Somestreet NE, Anytown</td>
+                        <td><span style="font-weight: 500;">Retail</span></td>
+                        <td>Ali</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td style="text-align: center;">
+                            <a href="#" class="btn-icon btn-wa"><i class="fab fa-whatsapp"></i></a>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr data-category="Wholesale" data-status="Pending">
+                        <td>
+                            <div class="user-profile">
+                                <div class="avatar bg-orange">XY</div>
+                                <div>
+                                    <div style="font-weight: 600;">XYZ Supply</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">#002</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="contact-info">
+                            <div style="font-size: 13px;"><i class="fas fa-envelope text-muted"></i> admin@xyz.com</div>
+                            <div style="font-size: 12px; color: #6b7280;"><i class="fas fa-phone"></i> 019-888 7777</div>
+                        </td>
+                        <td style="font-size: 13px; color: #4b5563;">45 Industrial Park, Selangor</td>
+                        <td><span style="font-weight: 500;">Wholesale</span></td>
+                        <td>Sarah</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td style="text-align: center;">
+                            <a href="#" class="btn-icon btn-wa"><i class="fab fa-whatsapp"></i></a>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+
+                     <tr data-category="Retail" data-status="Inactive">
+                        <td>
+                            <div class="user-profile">
+                                <div class="avatar bg-green">AA</div>
+                                <div>
+                                    <div style="font-weight: 600;">Ahmad Albab</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">#003</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="contact-info">
+                            <div style="font-size: 13px;"><i class="fas fa-envelope text-muted"></i> ahmad@gmail.com</div>
+                            <div style="font-size: 12px; color: #6b7280;"><i class="fas fa-phone"></i> 011-2233 4455</div>
+                        </td>
+                        <td style="font-size: 13px; color: #4b5563;">No 7, Jalan Damai, Cyberjaya</td>
+                        <td><span style="font-weight: 500;">Retail</span></td>
+                        <td>Ali</td>
+                        <td><span class="status-badge status-inactive">Inactive</span></td>
+                        <td style="text-align: center;">
+                            <a href="#" class="btn-icon btn-wa"><i class="fab fa-whatsapp"></i></a>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="noResults" style="display:none; text-align:center; padding: 40px; color: #6b7280;">
+                Tiada rekod dijumpai.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterTable() {
+            // 1. Dapatkan value dari semua input (Text, Category, Status)
+            var inputSearch = document.getElementById("searchInput").value.toLowerCase();
+            var selectCategory = document.getElementById("filterCategory").value;
+            var selectStatus = document.getElementById("filterStatus").value;
+
+            var table = document.getElementById("customerTable");
+            var tr = table.getElementsByTagName("tr");
+            var visibleCount = 0;
+
+            // 2. Loop setiap baris (mula index 1 sebab 0 tu header)
+            for (var i = 1; i < tr.length; i++) {
+                var row = tr[i];
+                
+                // Ambil data untuk text search (Nama & Contact)
+                var tdName = row.getElementsByTagName("td")[0]?.textContent.toLowerCase() || "";
+                var tdContact = row.getElementsByTagName("td")[1]?.textContent.toLowerCase() || "";
+                var combinedText = tdName + " " + tdContact; // Gabung supaya boleh search dua-dua
+
+                // Ambil data attributes untuk filter dropdown
+                var rowCategory = row.getAttribute("data-category");
+                var rowStatus = row.getAttribute("data-status");
+
+                // 3. Logic Filter (AND condition)
+                // Adakah text match?
+                var isTextMatch = combinedText.indexOf(inputSearch) > -1;
+                
+                // Adakah category match? (Kalau pilih 'all', dia jadi true)
+                var isCategoryMatch = (selectCategory === 'all') || (rowCategory === selectCategory);
+                
+                // Adakah status match?
+                var isStatusMatch = (selectStatus === 'all') || (rowStatus === selectStatus);
+
+                // 4. Paparkan jika SEMUA kondisi dipenuhi
+                if (isTextMatch && isCategoryMatch && isStatusMatch) {
+                    row.style.display = "";
+                    visibleCount++;
+                } else {
+                    row.style.display = "none";
+                }
+            }
+
+            // Handle "Tiada Rekod" message
+            document.getElementById("noResults").style.display = (visibleCount === 0) ? "block" : "none";
+        }
+    </script>
+</body>
+</html>

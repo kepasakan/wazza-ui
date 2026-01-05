@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Sign In Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4338ca; /* Indigo */
+            --secondary-color: #6366f1; /* Lighter Indigo */
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-color: #f3f4f6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            color: var(--text-dark);
+        }
+
+        /* The A4 Paper Container */
+        .sheet-container {
+            background-color: white;
+            width: 100%;
+            max-width: 210mm; /* A4 Width */
+            min-height: 297mm; /* A4 Height */
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        /* Header Styling */
+        .header {
+            margin-bottom: 40px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Top Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 20px 60px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            min-width: 100px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            padding: 5px 0;
+            font-size: 16px;
+            font-family: inherit;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Rounding the corners of the table header */
+        th:first-child { border-top-left-radius: 6px; }
+        th:last-child { border-top-right-radius: 6px; }
+
+        td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0; /* Removing padding so input fills cell */
+            height: 45px;
+        }
+
+        /* Number Column Styling */
+        td:first-child {
+            text-align: center;
+            color: var(--text-light);
+            font-weight: 500;
+            width: 40px;
+        }
+
+        /* Inputs inside table cells */
+        td input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+            outline: none;
+            background: transparent;
+        }
+
+        td input:focus {
+            background-color: #f9fafb;
+        }
+
+        tr:hover td {
+            background-color: #f9fafb;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .sheet-container {
+                box-shadow: none;
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            .header h1 {
+                color: black; /* Save ink */
+            }
+            th {
+                background-color: #ddd !important; /* Save ink */
+                color: black !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sheet-container">
+        <div class="header">
+            <h1>Meeting Sign In</h1>
+            <div style="font-size: 14px; color: #6b7280;">Please sign in clearly</div>
+        </div>
+
+        <div class="details-grid">
+            <div class="input-group">
+                <label>Project:</label>
+                <input type="text" placeholder="Enter project name">
+            </div>
+            <div class="input-group">
+                <label>Date:</label>
+                <input type="date">
+            </div>
+            <div class="input-group">
+                <label>Facilitator:</label>
+                <input type="text" placeholder="Enter name">
+            </div>
+            <div class="input-group">
+                <label>Time:</label>
+                <input type="time">
+            </div>
+            <div class="input-group" style="grid-column: span 2;">
+                <label>Place/Room:</label>
+                <input type="text" placeholder="Enter location">
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Print Name</th>
+                    <th>Organization</th>
+                    <th>Title</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+                 <tr>
+                    <td>10</td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; font-size: 12px; color: #9ca3af; text-align: center;">
+            Attendance Sheet • Page 1
+        </div>
+    </div>
+
+</body>
+</html>

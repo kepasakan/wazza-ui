@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Mode Leave Tracker - Modern Dashboard</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #e0e7ff;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-hover: #f8fafc;
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-accent: #6366f1;
+
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-light: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+
+            /* Leave Colors */
+            --vacation-bg: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            --vacation-text: #166534;
+            --sick-bg: linear-gradient(135deg, #fee2e2, #fecaca);
+            --sick-text: #991b1b;
+            --personal-bg: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            --personal-text: #1e40af;
+            --unpaid-bg: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            --unpaid-text: #374151;
+            --other-bg: linear-gradient(135deg, #fef3c7, #fde68a);
+            --other-text: #92400e;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg-primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            border-radius: 0 20px 20px 0;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+        .logo span {
+            background: var(--gradient);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-light);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-item:hover::before {
+            left: 0;
+        }
+
+        .nav-item:hover {
+            color: white;
+            transform: translateX(8px);
+        }
+
+        .nav-item.active {
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transform: translateX(8px);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 48px 56px;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+            padding: 32px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .title p {
+            margin: 12px 0 0;
+            color: var(--text-secondary);
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .actions button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .actions button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-secondary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .actions button:hover::before {
+            left: 0;
+        }
+
+        .actions button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Stats Row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0;
+            color: var(--text-primary);
+            line-height: 1.1;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-value span {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        .stat-trend {
+            font-size: 16px;
+            color: var(--success);
+            margin-top: 12px;
+            display: block;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Tables */
+        .card-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        /* Tab Switch Logic */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* DASHBOARD TABLE STYLES */
+        .dash-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dash-table th {
+            text-align: left;
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .dash-table td {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border);
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: background-color 0.2s ease;
+        }
+
+        .dash-table tr:last-child td { border-bottom: none; }
+        .dash-table tbody tr:hover { background-color: var(--bg-hover); }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            border: 3px solid var(--bg-card);
+        }
+
+        /* MONTHLY TRACKER STYLES */
+        .tracker-wrapper {
+            overflow-x: auto;
+            position: relative;
+            border-radius: 20px;
+        }
+
+        .tracker-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 100%;
+        }
+
+        .tracker-table th, .tracker-table td {
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            padding: 0;
+            height: 60px;
+            text-align: center;
+            min-width: 48px;
+        }
+
+        .tracker-table th:last-child,
+        .tracker-table td:last-child {
+            border-right: none;
+        }
+
+        /* Sticky Columns/Headers */
+        .tracker-table thead th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-tertiary);
+            z-index: 10;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tracker-table .col-name {
+            position: sticky;
+            left: 0;
+            background: var(--bg-card);
+            z-index: 20;
+            text-align: left;
+            padding-left: 24px;
+            min-width: 220px;
+            font-weight: 600;
+            border-right: 2px solid var(--border);
+            font-size: 16px;
+        }
+
+        .tracker-table thead .col-name {
+            z-index: 30;
+            background: var(--bg-tertiary);
+        }
+
+        /* Leave Pills */
+        .badge {
+            display: inline-flex;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .badge:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge.V { background: var(--vacation-bg); color: var(--vacation-text); }
+        .badge.S { background: var(--sick-bg); color: var(--sick-text); }
+        .badge.P { background: var(--personal-bg); color: var(--personal-text); }
+        .badge.U { background: var(--unpaid-bg); color: var(--unpaid-text); }
+
+        .weekend {
+            background: var(--bg-tertiary);
+        }
+
+        .legend {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 24px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar { width: 280px; }
+            .main { padding: 40px 32px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { padding: 32px 16px; }
+            .header { flex-direction: column; gap: 24px; align-items: flex-start; padding: 24px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .tracker-table .col-name { min-width: 160px; }
+            .title h1 { font-size: 28px; }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .card-container, .header {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo"><span>HR</span> Tracker</div>
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">
+            Year Overview
+        </div>
+        <div class="nav-item" onclick="switchTab('tracker', this)">
+            Monthly Calendar
+        </div>
+        <div class="nav-item">Settings</div>
+    </div>
+
+    <div class="main">
+        
+        <div id="dashboard" class="view-section active">
+            <div class="header">
+                <div class="title">
+                    <h1>Year to Date Summary</h1>
+                    <p>Leave allocation and usage for 2025</p>
+                </div>
+                <div class="actions">
+                    <button>+ New Request</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Vacation Days</div>
+                    <div class="stat-value">124 <span style="font-size:14px; color:#9CA3AF; font-weight:400">/ 500</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Sick Leave Taken</div>
+                    <div class="stat-value" style="color: #DC2626">24</div>
+                    <span class="stat-trend">Within limits</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Approval</div>
+                    <div class="stat-value">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Unpaid Leave</div>
+                    <div class="stat-value">18</div>
+                </div>
+            </div>
+
+            <div class="card-container">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Vacation (V)</th>
+                            <th>Sick (S)</th>
+                            <th>Personal (P)</th>
+                            <th>Other (O)</th>
+                            <th>Unpaid (U)</th>
+                            <th>Total Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="user-cell"><div class="avatar">N1</div> Name 1</div></td>
+                            <td>1.0</td>
+                            <td>4.0</td>
+                            <td>-</td>
+                            <td>1.0</td>
+                            <td>-</td>
+                            <td><strong>6.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td><div class="user-cell"><div class="avatar">N2</div> Name 2</div></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>3.0</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><strong>3.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td><div class="user-cell"><div class="avatar">N3</div> Name 3</div></td>
+                            <td>-</td>
+                            <td>2.0</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><strong>2.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td><div class="user-cell"><div class="avatar">N5</div> Name 5</div></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>18.0</td>
+                            <td><strong>18.0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tracker" class="view-section">
+            <div class="header">
+                <div class="title">
+                    <h1>January 2025</h1>
+                    <p>Daily leave tracking log</p>
+                </div>
+                <div class="actions">
+                    <button>Export CSV</button>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="dot" style="background:var(--vacation-text)"></div> Vacation</div>
+                <div class="legend-item"><div class="dot" style="background:var(--sick-text)"></div> Sick</div>
+                <div class="legend-item"><div class="dot" style="background:var(--personal-text)"></div> Personal</div>
+            </div>
+
+            <div class="card-container">
+                <div class="tracker-wrapper">
+                    <table class="tracker-table">
+                        <thead>
+                            <tr>
+                                <th class="col-name">Employee</th>
+                                <th>1</th><th>2</th><th>3</th><th class="weekend">4</th><th class="weekend">5</th>
+                                <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th class="weekend">11</th><th class="weekend">12</th>
+                                <th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th class="weekend">18</th><th class="weekend">19</th>
+                                <th>20</th><th>21</th><th>22</th><th>23</th><th>24</th><th class="weekend">25</th><th class="weekend">26</th>
+                                <th>27</th><th>28</th><th>29</th><th>30</th><th>31</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-name"><div class="user-cell">Name 1</div></td>
+                                <td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td><span class="badge S">S</span></td><td><span class="badge S">S</span></td><td><span class="badge S">S</span></td><td><span class="badge S">S</span></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td><span class="badge V">V</span></td><td><span class="badge U" style="background:white; border:1px solid #ddd; color:#333">O</span></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name"><div class="user-cell">Name 2</div></td>
+                                <td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td><span class="badge P">P</span></td><td><span class="badge P">P</span></td><td><span class="badge P">P</span></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td>
+                            </tr>
+                             <tr>
+                                <td class="col-name"><div class="user-cell">Name 3</div></td>
+                                <td><span class="badge S">S</span></td><td></td><td><span class="badge S">S</span></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td></td><td></td><td></td><td></td>
+                            </tr>
+                             <tr>
+                                <td class="col-name"><div class="user-cell">Name 5</div></td>
+                                <td></td><td></td><td></td><td class="weekend"></td><td class="weekend"></td>
+                                <td></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td class="weekend"></td><td class="weekend"></td>
+                                <td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td class="weekend"></td><td class="weekend"></td>
+                                <td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td class="weekend"></td><td class="weekend"></td>
+                                <td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td><span class="badge U">U</span></td><td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(viewId, element) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            // Show selected view
+            document.getElementById(viewId).classList.add('active');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

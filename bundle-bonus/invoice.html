@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Invoice</title>
+    <style>
+        /* General Reset and Typography */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 40px 0;
+            color: #333;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* The Invoice "Page" */
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eeeeee;
+            padding-bottom: 20px;
+        }
+
+        .company-branding h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .company-branding p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .invoice-details {
+            text-align: right;
+        }
+
+        .invoice-title {
+            color: #b0b0b0;
+            font-size: 40px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0 0 10px;
+            letter-spacing: 2px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            margin-right: 15px;
+        }
+
+        /* Client & Addresses */
+        .addresses {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 50px;
+        }
+
+        .address-box {
+            width: 45%;
+        }
+
+        .address-box h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #999;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .address-box p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .address-box .client-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        /* The Item Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 14px;
+        }
+
+        /* Column Alignments */
+        .col-desc { width: 50%; }
+        .col-qty { text-align: center; width: 10%; }
+        .col-price { text-align: right; width: 20%; }
+        .col-total { text-align: right; width: 20%; font-weight: bold; }
+
+        /* Totals Section */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .totals-table {
+            width: 40%;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            text-align: right;
+        }
+
+        .totals-table .label {
+            color: #7f8c8d;
+            padding-right: 20px;
+        }
+
+        .totals-table .value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .totals-table .grand-total {
+            font-size: 20px;
+            color: #2c3e50;
+            border-top: 2px solid #2c3e50;
+            border-bottom: none;
+            padding-top: 15px;
+        }
+
+        /* Footer & Notes */
+        .notes {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            border-left: 4px solid #2c3e50;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .notes h4 {
+            margin: 0 0 10px;
+            color: #2c3e50;
+        }
+
+        .footer-center {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Utility Buttons (Hidden in Print) */
+        .action-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: #34495e;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { 
+                background: none; 
+                padding: 0;
+            }
+            .invoice-container { 
+                box-shadow: none; 
+                width: 100%; 
+                max-width: 100%; 
+                padding: 20px;
+            }
+            .action-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+
+    <div class="invoice-container">
+        <header>
+            <div class="company-branding">
+                <h1>Company Name</h1>
+                <p>
+                    123 Business Road<br>
+                    City, State, Zip Code<br>
+                    web: somedomain.com | ph: 000-000-0000
+                </p>
+            </div>
+            
+            <div class="invoice-details">
+                <h2 class="invoice-title">INVOICE</h2>
+                <div class="detail-row">
+                    <span class="detail-label">Invoice #:</span>
+                    <span>123456</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date:</span>
+                    <span>Dec 28, 2025</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Due Date:</span>
+                    <span>Jan 27, 2026</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="addresses">
+            <div class="address-box">
+                <h3>Bill To</h3>
+                <p class="client-name">Client Name Here</p>
+                <p>
+                    Client Company LLC<br>
+                    456 Client Street<br>
+                    City, ST 90210
+                </p>
+            </div>
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-desc">Description</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-price">Unit Price</th>
+                    <th class="col-total">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Service Fee</strong><br>
+                        <span style="font-size: 12px; color: #777;">Standard consultation fee</span>
+                    </td>
+                    <td class="col-qty">1</td>
+                    <td class="col-price">$150.00</td>
+                    <td class="col-total">$150.00</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Labor</strong><br>
+                        <span style="font-size: 12px; color: #777;">5 hours @ $75/hr</span>
+                    </td>
+                    <td class="col-qty">5</td>
+                    <td class="col-price">$75.00</td>
+                    <td class="col-total">$375.00</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Parts</strong><br>
+                        <span style="font-size: 12px; color: #777;">Replacement hardware (Taxable)</span>
+                    </td>
+                    <td class="col-qty">3</td>
+                    <td class="col-price">$25.00</td>
+                    <td class="col-total">$75.00</td>
+                </tr>
+                </tbody>
+        </table>
+
+        <section class="totals-section">
+            <table class="totals-table">
+                <tr>
+                    <td class="label">Subtotal</td>
+                    <td class="value">$600.00</td>
+                </tr>
+                <tr>
+                    <td class="label">Taxable Amount</td>
+                    <td class="value">$75.00</td>
+                </tr>
+                <tr>
+                    <td class="label">Tax Rate (6.25%)</td>
+                    <td class="value">$4.69</td>
+                </tr>
+                <tr>
+                    <td class="label">Shipping/Other</td>
+                    <td class="value">-</td>
+                </tr>
+                <tr>
+                    <td class="label grand-total">TOTAL DUE</td>
+                    <td class="value grand-total">$604.69</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="notes">
+            <h4>Payment Terms & Notes</h4>
+            <p>1. Total payment due in 30 days.<br>
+            2. Please include the invoice number on your check.<br>
+            Make all checks payable to <strong>[Your Company Name]</strong>.</p>
+        </section>
+
+        <div class="footer-center">
+            <p>Thank You For Your Business!</p>
+            <p>Questions? Contact Name at email@address.com</p>
+        </div>
+    </div>
+
+</body>
+</html>

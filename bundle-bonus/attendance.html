@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Leave Tracker - Feb 2025</title>
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --primary-color: #2e7d32; /* Hijau professional */
+            --header-bg: #e8f5e9;
+            --border-color: #e0e0e0;
+            --text-main: #333;
+            --text-light: #777;
+            
+            /* Warna Status Cuti */
+            --color-al: #3b82f6; /* Blue - Annual Leave */
+            --color-mc: #ef4444; /* Red - Medical Leave */
+            --color-hl: #f59e0b; /* Orange - Hospitalization */
+            --color-ml: #8b5cf6; /* Purple - Maternity */
+            --color-ul: #64748b; /* Grey - Unpaid */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* Container Utama */
+        .tracker-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        /* Legend (Petunjuk) */
+        .legend {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Table Styles */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid #f0f0f0;
+        }
+
+        /* Sticky Columns for Name */
+        th:first-child, td:first-child,
+        th:nth-child(2), td:nth-child(2) {
+            position: sticky;
+            background: white;
+            z-index: 2;
+        }
+        
+        th:first-child, td:first-child { left: 0; }
+        th:nth-child(2), td:nth-child(2) { left: 50px; border-right: 2px solid var(--border-color); }
+
+        th {
+            background-color: var(--header-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        /* Weekend Highlighting */
+        .weekend {
+            background-color: #fafafa;
+            color: #999;
+        }
+
+        /* Interactive Cells */
+        td.day-cell {
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            min-width: 25px;
+        }
+
+        td.day-cell:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Status Styles */
+        .status-AL { background-color: #ebf8ff !important; color: var(--color-al); font-weight: bold; }
+        .status-MC { background-color: #fef2f2 !important; color: var(--color-mc); font-weight: bold; }
+        .status-HL { background-color: #fffbeb !important; color: var(--color-hl); font-weight: bold; }
+        .status-ML { background-color: #f3e8ff !important; color: var(--color-ml); font-weight: bold; }
+        .status-UL { background-color: #f1f5f9 !important; color: var(--color-ul); font-weight: bold; }
+
+        /* Totals Column */
+        .total-col {
+            background-color: #fcfcfc;
+            font-weight: 600;
+            width: 35px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="tracker-container">
+        <div class="header">
+            <div>
+                <h1>February 2025</h1>
+                <span style="color: var(--text-light); font-size: 14px;">Employee Leave Tracker</span>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item"><div class="dot" style="background: var(--color-al)"></div> AL (Annual)</div>
+                <div class="legend-item"><div class="dot" style="background: var(--color-mc)"></div> MC (Medical)</div>
+                <div class="legend-item"><div class="dot" style="background: var(--color-hl)"></div> HL (Hospital)</div>
+                <div class="legend-item"><div class="dot" style="background: var(--color-ml)"></div> ML (Maternity)</div>
+                <div class="legend-item"><div class="dot" style="background: var(--color-ul)"></div> UL (Unpaid)</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="leaveTable">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th style="min-width: 150px; text-align: left; padding-left: 15px;">Employee Name</th>
+                        <th class="total-col" style="border-left: 2px solid var(--border-color);">AL</th>
+                        <th class="total-col">MC</th>
+                        <th class="total-col">HL</th>
+                        <th class="total-col">ML</th>
+                        <th class="total-col">UL</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+        
+        <p style="margin-top: 20px; font-size: 12px; color: #888; text-align: right;">
+            * Click on any date cell to toggle status: Empty &rarr; AL &rarr; MC &rarr; HL &rarr; ML &rarr; UL
+        </p>
+    </div>
+
+<script>
+    // Configuration
+    const daysInMonth = 28; // Feb 2025
+    const startDayIndex = 6; // Feb 1 2025 is Saturday (0=Sun, 1=Mon... 6=Sat)
+    
+    // Sample Data
+    const employees = [
+        { id: 1, name: "Ahmad Albab" },
+        { id: 2, name: "Siti Sarah" },
+        { id: 3, name: "Chong Wei" },
+        { id: 4, name: "Raju Pillai" },
+        { id: 5, name: "Melissa Tan" },
+        { id: 6, name: "Employee 06" },
+        { id: 7, name: "Employee 07" },
+        { id: 8, name: "Employee 08" },
+        { id: 9, name: "Employee 09" },
+        { id: 10, name: "Employee 10" },
+    ];
+
+    const leaveTypes = ['', 'AL', 'MC', 'HL', 'ML', 'UL'];
+    const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+    const tableHeadRow = document.querySelector('#leaveTable thead tr');
+    const tableBody = document.getElementById('tableBody');
+
+    // 1. Build Header Dates
+    // Insert before the Totals columns (which start at index 2 currently in HTML structure)
+    // We actually need to insert after the 2nd child (Name)
+    let headerHTML = '';
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+        // Calculate day of week
+        // Feb 1 is Saturday.
+        // (startDayIndex + i - 1) % 7
+        const dayIndex = (startDayIndex + i - 1) % 7;
+        const dayName = daysOfWeek[dayIndex];
+        const isWeekend = (dayIndex === 0 || dayIndex === 6);
+        
+        const thClass = isWeekend ? 'weekend' : '';
+        
+        headerHTML += `<th class="${thClass}">
+            <div style="font-size:10px; opacity:0.7;">${dayName}</div>
+            <div>${i}</div>
+        </th>`;
+    }
+
+    // Insert the date headers
+    const nameHeader = tableHeadRow.children[1];
+    nameHeader.insertAdjacentHTML('afterend', headerHTML);
+
+
+    // 2. Build Employee Rows
+    employees.forEach(emp => {
+        const tr = document.createElement('tr');
+        
+        // ID and Name
+        let rowHTML = `<td>${emp.id}</td>
+                       <td style="text-align: left; padding-left: 15px; font-weight: 500;">${emp.name}</td>`;
+
+        // Date Cells
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayIndex = (startDayIndex + i - 1) % 7;
+            const isWeekend = (dayIndex === 0 || dayIndex === 6);
+            const tdClass = isWeekend ? 'weekend day-cell' : 'day-cell';
+            
+            rowHTML += `<td class="${tdClass}" onclick="toggleStatus(this)" data-val="">-</td>`;
+        }
+
+        // Total Cells (Placeholders)
+        rowHTML += `<td class="total-col" style="border-left: 2px solid #e0e0e0;" id="total-al-${emp.id}">0</td>
+                    <td class="total-col" id="total-mc-${emp.id}">0</td>
+                    <td class="total-col" id="total-hl-${emp.id}">0</td>
+                    <td class="total-col" id="total-ml-${emp.id}">0</td>
+                    <td class="total-col" id="total-ul-${emp.id}">0</td>`;
+
+        tr.innerHTML = rowHTML;
+        tableBody.appendChild(tr);
+    });
+
+    // 3. Interaction Logic
+    function toggleStatus(cell) {
+        // Current value
+        let currentVal = cell.getAttribute('data-val') || '';
+        let currentIndex = leaveTypes.indexOf(currentVal);
+        
+        // Next value
+        let nextIndex = (currentIndex + 1) % leaveTypes.length;
+        let nextVal = leaveTypes[nextIndex];
+
+        // Update Cell
+        cell.setAttribute('data-val', nextVal);
+        cell.textContent = nextVal === '' ? '-' : nextVal;
+        
+        // Remove old class, add new class
+        cell.className = cell.className.replace(/status-\w+/g, '').trim();
+        if (nextVal) {
+            cell.classList.add(`status-${nextVal}`);
+        }
+
+        // Update Row Totals
+        updateRowTotals(cell.parentElement);
+    }
+
+    function updateRowTotals(row) {
+        const cells = row.querySelectorAll('.day-cell');
+        const counts = { AL: 0, MC: 0, HL: 0, ML: 0, UL: 0 };
+
+        cells.forEach(c => {
+            const val = c.getAttribute('data-val');
+            if (val && counts.hasOwnProperty(val)) {
+                counts[val]++;
+            }
+        });
+
+        // Update the total columns
+        // We get the ID from the first cell to find specific total cells if needed, 
+        // but here we can just use child indices relative to the end of the row.
+        // Or cleaner: use the IDs we assigned.
+        const empId = row.children[0].textContent;
+        
+        document.getElementById(`total-al-${empId}`).textContent = counts.AL || '-';
+        document.getElementById(`total-mc-${empId}`).textContent = counts.MC || '-';
+        document.getElementById(`total-hl-${empId}`).textContent = counts.HL || '-';
+        document.getElementById(`total-ml-${empId}`).textContent = counts.ML || '-';
+        document.getElementById(`total-ul-${empId}`).textContent = counts.UL || '-';
+    }
+
+</script>
+
+</body>
+</html>
